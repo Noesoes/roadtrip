@@ -1,11 +1,22 @@
 // Offline support: app shell + map tiles you've already seen.
 // Trip data itself (route + suggestions) is saved by the app in localStorage.
-const SHELL = 'shell-v1';
+const SHELL = 'shell-v2';
 const TILES = 'tiles-v1';
 const TILE_LIMIT = 1500;
 
+// Cache the page and everything it links to up front, so the very first visit
+// is enough to reopen the app later with no signal.
+async function precache() {
+  const cache = await caches.open(SHELL);
+  const res = await fetch('./', { cache: 'no-cache' });
+  const html = await res.clone().text();
+  await cache.put('./', res);
+  const urls = [...html.matchAll(/(?:src|href)="(\.\/[^"]+)"/g)].map((m) => m[1]);
+  await Promise.all(urls.map((u) => cache.add(u).catch(() => {})));
+}
+
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(SHELL).then((c) => c.add('./')).then(() => self.skipWaiting()));
+  e.waitUntil(precache().then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {

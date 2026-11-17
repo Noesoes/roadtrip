@@ -24,6 +24,7 @@ export function MapView(props: {
     L.control.zoom({ position: 'topright' }).addTo(m);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
+      crossOrigin: true, // readable responses, so the service worker can cache tiles
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(m);
     markers.current = L.layerGroup().addTo(m);

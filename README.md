@@ -50,7 +50,7 @@ built on OpenStreetMap:
 
 | Need | Service |
 | --- | --- |
-| Place search | [Photon](https://photon.komoot.io) |
+| Place search | [Photon](https://photon.komoot.io), falling back to [Nominatim](https://nominatim.org) |
 | Driving route | [OSRM demo server](https://project-osrm.org) |
 | Places along the route | [Overpass API](https://overpass-api.de), with fallback mirrors |
 | Map tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright) |

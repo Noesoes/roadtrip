@@ -12,18 +12,19 @@ async function getJson(url: string, init?: RequestInit, timeoutMs = 30_000) {
   return res.json();
 }
 
-/** Place search (Photon, built on OpenStreetMap). */
+/** Place search: Photon first, Nominatim if it's down (both built on OpenStreetMap). */
 export async function searchPlaces(q: string): Promise<Place[]> {
-  const data = await getJson(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=en`, undefined, 10_000);
-  return (data.features ?? []).map((f: any) => {
-    const p = f.properties ?? {};
-    const parts = [p.name, p.city, p.state, p.country].filter(Boolean);
-    return {
-      label: [...new Set(parts)].join(', '),
-      lng: f.geometry.coordinates[0],
-      lat: f.geometry.coordinates[1],
-    };
-  });
+  try {
+    const data = await getJson(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=en`, undefined, 8_000);
+    return (data.features ?? []).map((f: any) => {
+      const p = f.properties ?? {};
+      const parts = [p.name, p.city, p.state, p.country].filter(Boolean);
+      return { label: [...new Set(parts)].join(', '), lng: f.geometry.coordinates[0], lat: f.geometry.coordinates[1] };
+    });
+  } catch {
+    const data = await getJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encodeURIComponent(q)}`, undefined, 8_000);
+    return data.map((r: any) => ({ label: r.display_name, lat: +r.lat, lng: +r.lon }));
+  }
 }
 
 /** Driving route (OSRM public demo server). */
