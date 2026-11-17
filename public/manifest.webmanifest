@@ -1,0 +1,10 @@
+{
+  "name": "Roadtrip",
+  "short_name": "Roadtrip",
+  "description": "Stops worth the detour, matched to your interests.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f6f4ee",
+  "theme_color": "#1f6f5c",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
